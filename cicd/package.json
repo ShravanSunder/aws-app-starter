@@ -1,0 +1,34 @@
+{
+  "name": "cicd",
+  "version": "0.1.0",
+  "bin": {
+    "cicd": "bin/cicd.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w",
+    "cdk": "cdk",
+    "deploy": "npm run build && npm run cdk -- deploy",
+    "synth": "npm run build && npm run cdk -- synth"
+  },
+  "devDependencies": {
+    "@aws-cdk/aws-codebuild": "^1.22.0",
+    "@aws-cdk/aws-codepipeline": "^1.22.0",
+    "@aws-cdk/aws-codepipeline-actions": "^1.22.0",
+    "@aws-cdk/aws-iam": "^1.22.0",
+    "@aws-cdk/aws-lambda": "^1.22.0",
+    "@aws-cdk/aws-s3": "^1.22.0",
+    "@aws-cdk/aws-sam": "^1.22.0",
+    "@aws-cdk/aws-secretsmanager": "^1.22.0",
+    "@aws-cdk/aws-stepfunctions": "^1.22.0",
+    "@aws-cdk/core": "^1.22.0",
+    "@types/node": "^8.10.59",
+    "aws-cdk": "^1.22.0",
+    "aws-sdk": "^2.610.0",
+    "tsort": "0.0.1",
+    "typescript": "^3.7.5"
+  },
+  "dependencies": {
+    "source-map-support": "^0.5.16"
+  }
+}

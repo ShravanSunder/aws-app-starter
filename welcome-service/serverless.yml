@@ -1,0 +1,33 @@
+service: welcome-service
+
+plugins:
+  - serverless-webpack
+  - serverless-offline
+  - serverless-prune-plugin
+  - serverless-pseudo-parameters
+  - serverless-iam-roles-per-function
+
+provider:
+  name: aws
+  runtime: nodejs10.x
+  stage: ${opt:stage, 'local'}
+  region: ${opt:region, '${env:TARGET_REGION}'}
+  tracing:
+    lambda: true
+  environment:
+    SLIC_STAGE: ${self:provider.stage}
+  logRetentionInDays: 7
+
+custom:
+  webpack:
+    keepOutputDirectory: true
+  emailQueueName: ${self:provider.stage}-email-queue
+  prune:
+    automatic: true
+    number: 3
+  serverless-offline:
+    port: 4001
+    stage: local
+    region: ${self:provider.region}
+
+functions: ${file(./sls-functions.yml)}

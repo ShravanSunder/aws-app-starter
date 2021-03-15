@@ -1,0 +1,49 @@
+service: email-service
+
+plugins:
+  - serverless-webpack
+  - serverless-offline
+  - serverless-offline-sqs
+  - serverless-prune-plugin
+  - serverless-pseudo-parameters
+  - serverless-iam-roles-per-function
+
+provider:
+  name: aws
+  runtime: nodejs10.x
+  stage: ${opt:stage, 'local'}
+  region: ${opt:region, '${env:TARGET_REGION}'}
+  sesRegion: ${self:custom.sesRegions.${self:provider.region}, 'us-east-1'}
+  tracing:
+    lambda: true
+  environment:
+    SLIC_STAGE: ${self:provider.stage}
+    SES_REGION: ${self:provider.sesRegion}
+  logRetentionInDays: 7
+
+custom:
+  webpack:
+    keepOutputDirectory: true
+  emailQueueName: ${self:provider.stage}-email-queue
+  prune:
+    automatic: true
+  number: 3
+  nsDomain: ${env:SLIC_NS_DOMAIN}
+  domainPrefixes: ${file(../common-config.json):domainPrefixes}
+  sesRegions:
+    us-east-1: us-east-1
+    us-west-2: us-west-2
+    eu-west-1: eu-west-1
+  serverless-offline:
+    port: 4002
+    stage: local
+    region: ${opt:region, '${env:TARGET_REGION}'}
+  serverless-offline-sqs:
+    endpoint: ${env:SQS_ENDPOINT_URL,'http://0.0.0.0:4576'}
+    autoCreate: true
+    region: ${self:provider.region}
+
+functions: ${file(./sls-functions.yml)}
+
+resources:
+  Resources: ${file(./sls-resources.yml)}

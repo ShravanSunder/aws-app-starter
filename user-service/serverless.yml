@@ -1,0 +1,61 @@
+service: user-service
+
+plugins:
+  - serverless-webpack
+  - serverless-offline
+  - serverless-prune-plugin
+  - serverless-pseudo-parameters
+  - serverless-iam-roles-per-function
+
+provider:
+  name: aws
+  endpointType: REGIONAL
+  runtime: nodejs10.x
+  stage: ${opt:stage, 'local'}
+  region: ${opt:region, '${env:TARGET_REGION}'}
+  tracing:
+    apiGateway: true
+    lambda: true
+  environment:
+    SLIC_STAGE: ${self:provider.stage}
+  logs:
+    restApi: true
+  logRetentionInDays: 7
+
+custom:
+  webpack:
+    keepOutputDirectory: true
+  stage: ${opt:stage, 'dev'}
+  serverless-offline:
+    port: 4003
+    stage: local
+    region: ${self:provider.region}
+    noAuth: true
+  prune:
+    automatic: true
+    number: 3
+  logForwarding:
+    destinationARN: !ImportValue ${self:provider.stage}-log-forwarder-function-arn
+
+functions: ${file(./sls-functions.yml)}
+
+resources:
+  Outputs:
+    userPool:
+      Value: !Ref slicUserPool
+      Export:
+        Name: ${self:provider.stage}-user-pool-id
+    userPoolClient:
+      Value: !Ref slicUserPoolClient
+      Export:
+        Name: ${self:provider.stage}-user-pool-client-id
+    identityPool:
+      Value: !Ref slicIdentityPool
+      Export:
+        Name: ${self:provider.stage}-identity-pool
+    slicUserPoolArn:
+      Value: !Ref slicUserPoolArn
+      Export:
+        Name: ${self:provider.stage}-user-pool-arn
+
+  Resources: ${file(./sls-resources.yml)}

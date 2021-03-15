@@ -1,0 +1,16 @@
+service: frontend
+
+plugins:
+  - serverless-s3-sync
+  - serverless-pseudo-parameters
+
+provider:
+  name: aws
+  runtime: nodejs10.x
+  stage: ${opt:stage, 'local'}
+  region: ${opt:region, '${env:TARGET_REGION}'}
+
+custom: ${file(./custom.yml.js)}
+
+resources:
+  Resources: ${file(./sls-resources.yml.js)}
