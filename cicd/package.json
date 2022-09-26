@@ -23,7 +23,7 @@
     "@aws-cdk/aws-stepfunctions": "^1.22.0",
     "@aws-cdk/core": "^1.22.0",
     "@types/node": "^8.10.59",
-    "aws-cdk": "^1.22.0",
+    "aws-cdk": "^1.174.0",
     "aws-sdk": "^2.610.0",
     "tsort": "0.0.1",
     "typescript": "^3.7.5"
